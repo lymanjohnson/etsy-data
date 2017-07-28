@@ -2,7 +2,6 @@
 // you have access to the `data` variable that contains the Etsy Store data.
 // Open your `index.html` page in your browser and you can verify that the following
 // is properly working. The `data` variable is an array with 25 items in it
-// console.log(data);
 
 console.log(data);
 
@@ -109,7 +108,7 @@ function question5 () {
   for (i=0;i<complicatedItems.length;i++){
     console.log(complicatedItems[i].title + " has " + complicatedItems[i].materials.length + " materials:");
     for (j=0;j<complicatedItems[i].materials.length;j++){
-      console.log("\t - "+complicatedItems[i].materials[j]);
+      console.log("\t "+(j+1)+". "+ complicatedItems[i].materials[j]);
     }
 
   }
@@ -120,5 +119,14 @@ function question5 () {
 // 6: How many items were made by their sellers?
 // Answer:
 function question6 () {
-  // Answer:
+  homeMadeItems = [];
+  for (i=0;i<data.length;i++){
+    if (data[i].who_made == "i_did"){
+      homeMadeItems.push(data[i]);
+    }
+  }
+  console.log(homeMadeItems.length + " items were made by their sellers:");
+  for (i=0;i<homeMadeItems.length;i++){
+    console.log("\t " +(i+1)+". "+ homeMadeItems[i].title);
+  }
 }
