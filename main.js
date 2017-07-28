@@ -37,7 +37,7 @@ function question1 () {
   trueAverage = Math.round(trueAverage*100)/100;
 
   console.log("The average price is $"+average);
-  console.log("\t"+"(But not really, because "+numberOfForeignItems+" of them "+transitiveVerb+" in GBP. At 1 USD:"+exchange+" GBP, the true average price is $"+trueAverage+")");
+  console.log("\t"+"(But not really, because "+numberOfForeignItems+" of them "+transitiveVerb+" in GBP. At 1 GBP:"+exchange+" USD, the true average price is $"+trueAverage+")");
   return average;
 }
 
