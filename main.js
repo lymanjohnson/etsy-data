@@ -3,13 +3,32 @@
 // Open your `index.html` page in your browser and you can verify that the following
 // is properly working. The `data` variable is an array with 25 items in it
 
-console.log(data);
+
+function loadXMLDoc(theURL)
+{
+    if (window.XMLHttpRequest)
+    {// code for IE7+, Firefox, Chrome, Opera, Safari, SeaMonkey
+        xmlhttp=new XMLHttpRequest();
+    }
+    else
+    {// code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+
+    xmlhttp.open("GET", theURL, false);
+    xmlhttp.send();
+    return xmlhttp.responseText;
+}
+
+const exchangeTable = JSON.parse(loadXMLDoc("http://www.apilayer.net/api/live?access_key=1a655555c96d04e68558fe1ad928cf10&format=1"));
+
+// console.log(exchangeTable.quotes.USDGBP);
 
 // 1: Show me how to calculate the average price of all items.
 function question1 () {
   let sum = 0;
   let trueSum = 0;
-  let exchange = 1.31;
+  let exchange = 1/(exchangeTable.quotes.USDGBP);//1.31;
   let numberOfForeignItems = 0;
   let transitiveVerb = "is";
 
@@ -37,7 +56,7 @@ function question1 () {
   trueAverage = Math.round(trueAverage*100)/100;
 
   console.log("The average price is $"+average);
-  console.log("\t"+"(But not really, because "+numberOfForeignItems+" of them "+transitiveVerb+" in GBP. At 1 GBP:"+exchange+" USD, the true average price is $"+trueAverage+")");
+  console.log("\t"+"(But not really, because "+numberOfForeignItems+" of them "+transitiveVerb+" in GBP. At 1 GBP:"+(Math.round(100*exchange)/100)+" USD, the true average price is $"+trueAverage+")");
   return average;
 }
 
