@@ -33,54 +33,60 @@ function question1 () {
   let transitiveVerb = "is";
   let foreignItemsCount = 0;
 
-  for (i=0;i<data.length;i++){
+  for (i=0;i<data.length;i++){  // If the item is in USD, it simply adds the price to the total
     if (data[i].currency_code=="USD"){
       sum += data[i].price;
       trueSum += data[i].price;
     }
-    else { //if not USD...
+    else { //if not USD, it converts and tracks the true price, as well as how many unique currencies have appeared and how many times
       foreignItemsCount += 1;
-      let conversionCode = "USD"+data[i].currency_code;
-      let exchangeRate = 1/eval("exchangeTable.quotes."+conversionCode);
-      foreignCurrenciesUsed[data[i].currency_code] = (foreignCurrenciesUsed[data[i].currency_code] + 1 || 1);
-      sum += data[i].price;
-      trueSum += exchangeRate*data[i].price;
+      let conversionCode = "USD"+data[i].currency_code; //generates a string containing the key to correct exchange rate
+      let exchangeRate = eval("exchangeTable.quotes."+conversionCode); //fetches exchange rate
+      foreignCurrenciesUsed[data[i].currency_code] = (foreignCurrenciesUsed[data[i].currency_code] + 1 || 1); //puts the number of times a currency has been used into the "foreignCurrenciesUsed" object.
+      sum += data[i].price; //the standard total sum for the vanilla answer
+      trueSum += data[i].price/exchangeRate; //the true total sum using currency exchanges
     }
   }
 
-  let average = (sum/data.length);
-  let trueAverage = (trueSum/data.length);
+  let average = (sum/data.length);  //standard vanilla average
+  let trueAverage = (trueSum/data.length); //average calculated with currency exchange
 
-  if (foreignItemsCount>1) {
+  average = Math.round(average*100)/100; //rounds to nearest cent
+  trueAverage = Math.round(trueAverage*100)/100; //rounds to nearest cent
+
+  if (foreignItemsCount>1) { //fixes the grammar depending on how many foreign items there were
     transitiveVerb = "are";
   }
 
-
-  let uniqueCurrenciesArray = Object.keys(foreignCurrenciesUsed);
-  let numberOfUniqueCurrencies = uniqueCurrenciesArray.length;
-  let currencySingularPlural = "in a foreign currency";
+  let uniqueCurrenciesArray = Object.keys(foreignCurrenciesUsed); //puts each unique currency in a plain array
+  let numberOfUniqueCurrencies = uniqueCurrenciesArray.length; //finds the length of that array to determine how many foreign currencies there are
+  let currencySingularPlural = "in a foreign currency"; //grammar if there's only one foreign currency.
 
   if (numberOfUniqueCurrencies>1){
-    currencySingularPlural=("in " + numberOfUniqueCurrencies + " unique foreign currencies");
+    currencySingularPlural=("in " + numberOfUniqueCurrencies + " unique foreign currencies"); //fixes grammar if there are multiple foreign currencies
   };
 
-  average = Math.round(average*100)/100;
-  trueAverage = Math.round(trueAverage*100)/100;
 
-  console.log("The average price is $"+average+"\n ");
+  console.log("The average price is $"+average+"\n "); //gives the vanilla answer
 
-  if(numberOfUniqueCurrencies>0){
-    console.log("\t"+"(But not really, because "+foreignItemsCount+" of them "+transitiveVerb,currencySingularPlural+ ".)");
+  if(numberOfUniqueCurrencies>0){ //if there are multiple currencies, it states how many foreign items, and how many unique foreign currencies. It then lists the currencies, the number of items that use each currency, and the up-to-date exchange rate.
+    console.log("\t"+"But not really, because "+foreignItemsCount+" of them "+transitiveVerb,currencySingularPlural+ ":");
 
     for (let i = 0; i<uniqueCurrenciesArray.length; i++){
       currentCurrency = uniqueCurrenciesArray[i]
       numberOfItemsForThisCurrency = foreignCurrenciesUsed[currentCurrency];
       let isPlural = "";
       if (numberOfItemsForThisCurrency>1){isPlural="s"};
-      console.log("\t\t"+(i+1)+".",currentCurrency+": "+numberOfItemsForThisCurrency,"item"+isPlural);
+
+      let currentConversionCode = "USD"+currentCurrency; //string for current conversion code
+      let currentExchangeRate = eval("exchangeTable.quotes."+currentConversionCode); //fetches current exchange rate
+
+      console.log("\t\t"+(i+1)+".",currentCurrency+": "+numberOfItemsForThisCurrency,"item"+isPlural+".\n\t\t\tThe current exchange rate is "+currentExchangeRate,currentCurrency,": 1 USD");
+
+
     }
 
-    console.log("\nTherefore, the true average price is $"+trueAverage+".");
+    console.log("\nOnce these are converted, the true average price comes out to be $"+trueAverage+".\n ");
     console.log("This was calculated using the free currency exchange API at www.apilayer.net\n ")
   }
 
