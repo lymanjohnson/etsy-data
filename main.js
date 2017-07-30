@@ -41,16 +41,13 @@ function question1 () {
     else { //if not USD...
       foreignItemsCount += 1;
       let conversionCode = "USD"+data[i].currency_code;
-      // console.log(conversionCode);
       let exchangeRate = 1/eval("exchangeTable.quotes."+conversionCode);
       foreignCurrenciesUsed[data[i].currency_code] = (foreignCurrenciesUsed[data[i].currency_code] + 1 || 1);
-      // console.log(foreignCurrenciesUsed);
       sum += data[i].price;
       trueSum += exchangeRate*data[i].price;
     }
   }
 
-  // console.log(foreignCurrenciesUsed);
   let average = (sum/data.length);
   let trueAverage = (trueSum/data.length);
 
@@ -58,30 +55,34 @@ function question1 () {
     transitiveVerb = "are";
   }
 
-  // console.log(Object.keys(foreignCurrenciesUsed));
 
   let uniqueCurrenciesArray = Object.keys(foreignCurrenciesUsed);
   let numberOfUniqueCurrencies = uniqueCurrenciesArray.length;
-  let currencySingularPlural = "currency";
-  if (numberOfUniqueCurrencies>1){currencySingularPlural="currencies"};
+  let currencySingularPlural = "in a foreign currency";
+
+  if (numberOfUniqueCurrencies>1){
+    currencySingularPlural=("in " + numberOfUniqueCurrencies + " unique foreign currencies");
+  };
 
   average = Math.round(average*100)/100;
   trueAverage = Math.round(trueAverage*100)/100;
 
-  console.log("The average price is $"+average);
-  console.log("\t"+"(But not really, because "+foreignItemsCount+" of them "+transitiveVerb+" in "+numberOfUniqueCurrencies+" foreign " +currencySingularPlural+ ". The true average price is $"+trueAverage+")");
+  console.log("The average price is $"+average+"\n ");
 
+  if(numberOfUniqueCurrencies>0){
+    console.log("\t"+"(But not really, because "+foreignItemsCount+" of them "+transitiveVerb,currencySingularPlural+ ".)");
 
+    for (let i = 0; i<uniqueCurrenciesArray.length; i++){
+      currentCurrency = uniqueCurrenciesArray[i]
+      numberOfItemsForThisCurrency = foreignCurrenciesUsed[currentCurrency];
+      let isPlural = "";
+      if (numberOfItemsForThisCurrency>1){isPlural="s"};
+      console.log("\t\t"+(i+1)+".",currentCurrency+": "+numberOfItemsForThisCurrency,"item"+isPlural);
+    }
 
-  for (let i = 0; i<uniqueCurrenciesArray.length; i++){
-    currentCurrency = uniqueCurrenciesArray[i]
-    numberOfItemsForThisCurrency = foreignCurrenciesUsed[currentCurrency];
-    let isPlural = "";
-    if (numberOfItemsForThisCurrency>1){isPlural="s"};
-    console.log("\t"+(i+1)+".",currentCurrency,numberOfItemsForThisCurrency,"item"+isPlural);
+    console.log("\nTherefore, the true average price is $"+trueAverage+".");
+    console.log("This was calculated using the free currency exchange API at www.apilayer.net\n ")
   }
-
-
 
   return trueAverage;
 }
