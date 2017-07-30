@@ -24,12 +24,13 @@ const exchangeTable = JSON.parse(loadXMLDoc("http://www.apilayer.net/api/live?ac
 
 // console.log(exchangeTable.quotes.USDGBP);
 
-// 1: Show me how to calculate the average price of all items.
+// 1: Show me how to calculate t\
+he average price of all items.
 function question1 () {
   let sum = 0;
   let trueSum = 0;
   let exchange = 1/(exchangeTable.quotes.USDGBP);//1.31;
-  let numberOfForeignItems = 0;
+  let foreignCurrenciesUsed = [];
   let transitiveVerb = "is";
 
   for (i=0;i<data.length;i++){
@@ -37,27 +38,30 @@ function question1 () {
       sum += data[i].price;
       trueSum += data[i].price;
     }
-    else if (data[i].currency_code == "GBP"){
+    else { //if not USD...
+      let conversionCode = "USD"+data[i].currency_code;
+      console.log(conversionCode);
+      let exchangeRate = 1/eval("exchangeTable.quotes."+conversionCode);
+      console.log(exchangeRate);
+      foreignCurrenciesUsed+=1;
       sum += data[i].price;
-      trueSum += exchange*data[i].price;
-      numberOfForeignItems += 1;
+      trueSum += exchangeRate*data[i].price;
     }
-
   }
+
   let average = (sum/data.length);
   let trueAverage = (trueSum/data.length);
 
-  if (numberOfForeignItems>1) {
+  if (foreignCurrenciesUsed>1) {
     transitiveVerb = "are";
   }
-
 
   average = Math.round(average*100)/100;
   trueAverage = Math.round(trueAverage*100)/100;
 
   console.log("The average price is $"+average);
-  console.log("\t"+"(But not really, because "+numberOfForeignItems+" of them "+transitiveVerb+" in GBP. At 1 GBP:"+(Math.round(100*exchange)/100)+" USD, the true average price is $"+trueAverage+")");
-  return average;
+  console.log("\t"+"(But not really, because "+foreignCurrenciesUsed+" of them "+transitiveVerb+" in foreign currencies. The true average price is $"+trueAverage+")");
+  return trueAverage;
 }
 
 
